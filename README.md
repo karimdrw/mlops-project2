@@ -106,7 +106,7 @@ docker run -e WANDB_API_KEY=your_api_key_here mrpc-training
 
 ## 📝 License
 
-This project is part of the MLOps course at [Your University]. Feel free to use for educational purposes.
+This project is part of the MLOps course at Hochschule Luzern (HSLU).
 
 ## 🤝 Contributing
 
