@@ -36,7 +36,7 @@ def main():
                         help="Weight decay (default: 0.0)")
     parser.add_argument("--warmup_steps", type=int, default=0,
                         help="Number of warmup steps (default: 0)")
-    parser.add_argument("--batch_size", type=int, default=32,
+    parser.add_argument("--batch_size", type=int, default=24,
                         help="Training batch size (default: 32)")
     parser.add_argument("--epochs", type=int, default=3,
                         help="Number of training epochs (default: 3)")
@@ -50,6 +50,8 @@ def main():
                         help="GLUE task name (default: mrpc)")
     
     # Experiment tracking
+    parser.add_argument("--wandb_api_key", type=str, default=None,
+                        help="W&B API key (default: None, read from env variable if not provided)")
     parser.add_argument("--wandb_project", type=str, default="mrpc-docker-training",
                         help="W&B project name (default: mrpc-docker-training)")
     parser.add_argument("--wandb_run_name", type=str, default=None,
@@ -57,6 +59,7 @@ def main():
     # Other
     parser.add_argument("--seed", type=int, default=42,
                         help="Random seed (default: 42)")
+                        
     
     args = parser.parse_args()
     
@@ -83,14 +86,16 @@ def main():
     )
 
     # Setup logger
-    wandb_api_key = os.environ.get("WANDB_API_KEY")
+    wandb_api_key = args.wandb_api_key
+    if not wandb_api_key:
+        wandb_api_key = os.environ.get("WANDB_API_KEY", None)
 
     if wandb_api_key:
         wandb.login(key=wandb_api_key)
-        print("W&B login successful via environment variable")
+        print("W&B login successful.")
     else:
-        print("W&B API key not found in environment variables, please set it to enable logging.")
-        exit(1)
+        print("W&B API key not provided. Set via --wandb_api_key or WANDB_API_KEY env variable.")
+        exit()
 
     run_name = args.wandb_run_name or f"docker-run-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
     logger = WandbLogger(
